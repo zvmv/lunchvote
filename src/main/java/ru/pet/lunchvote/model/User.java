@@ -1,11 +1,54 @@
 package ru.pet.lunchvote.model;
 
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+import net.bytebuddy.implementation.bind.annotation.FieldValue;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Set;
+
+@Entity
+@Table(name="users")
+@Getter
+@Setter
 public class User {
-    Integer id;
-    String email;
-    String login;
-    String password;
-    String name;
-    Role role;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
+
+    @Column(name="email", length = 30, nullable = false, unique = true)
+    @NotBlank
+    @Max(30)
+    private String email;
+
+    @Column(name="password", length = 16, nullable = false)
+    @NotNull
+    @Max(16)
+    @Min(5)
+    private String password;
+
+    @Column(name="name", length = 30, nullable = false)
+    @NotBlank
+    @Max(30)
+    private String name;
+
+    @Column(name="roles", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name="user_roles", joinColumns = @JoinColumn(name ="user_id"))
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "user_id")
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> roles;
+
+    @Column(name="enabled")
+    @NotNull
+    Boolean enabled;
 }
