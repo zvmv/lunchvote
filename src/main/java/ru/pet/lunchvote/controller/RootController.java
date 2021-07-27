@@ -13,6 +13,7 @@ import ru.pet.lunchvote.repository.UserRepository;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -31,13 +32,7 @@ public class RootController {
     @GetMapping("/")
     public String main(Model model, HttpServletRequest request){
         log.info("Main");
-        Cookie cookie = List.of(request.getCookies()).stream().filter(c -> "session".equals(c.getName())).findFirst().get();
-        int id = cookie == null? -1: Security.checkLogin(cookie.getValue());
-        log.info("Cookie: " + cookie.getValue());
-        if (id > 0) {
-            log.info("Has logged user with id " + id);
-            model.addAttribute("user", repository.getById(id));
-        }
+        model.addAttribute("user", getLoggedUser(request));
         return "index";
     }
 
@@ -70,4 +65,23 @@ public class RootController {
        return "index";
     }
 
+    @GetMapping("userlist")
+    public String userList(HttpServletRequest request){
+        User loggedUser = getLoggedUser(request);
+        if (loggedUser == null || !loggedUser.isAdmin()) return "index";
+        request.setAttribute("users", repository.findAll());
+        return "userlist";
+    }
+
+    private User getLoggedUser(HttpServletRequest request){
+        Cookie cookie = Arrays.stream(request.getCookies()).filter(c -> "session".equals(c.getName())).findFirst().get();
+        User user = null;
+        int id = cookie == null? -1: Security.checkLogin(cookie.getValue());
+        log.info("Cookie: " + cookie.getValue());
+        if (id > 0) {
+            user = repository.getById(id);
+            log.info("Has logged user " + user.getEmail());
+        }
+        return user;
+    }
 }

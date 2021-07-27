@@ -51,4 +51,8 @@ public class User {
     @Column(name="enabled")
     @NotNull
     Boolean enabled;
+
+    public boolean isAdmin(){
+       return roles.contains(Role.ADMIN);
+    }
 }

@@ -5,14 +5,13 @@
     <title>Title</title>
 </head>
 <body>
-<a href="admins">Users</a>
-<a href="voting">Voting</a>
-<a th:href="@{/logout}" th:if="${user}" th:text="${user.name} + ': Logout'">Logout</a>
+<div th:include="fragments/header"></div>
 <h1>Welcome to lunchvote</h1>
 <form action="login" method="post">
     <label>E-mail: </label> <input name="email"><br>
     <label>Password: </label> <input name="pass"><br>
     <input type="submit" value="Войти/регистрация">
 </form>
+<div th:include="fragments/footer"></div>
 </body>
 </html>
