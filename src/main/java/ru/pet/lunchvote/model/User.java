@@ -20,7 +20,7 @@ import java.util.Set;
 @Setter
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name="email", length = 30, nullable = false, unique = true)
