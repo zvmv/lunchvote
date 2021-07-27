@@ -7,12 +7,11 @@ import lombok.experimental.FieldDefaults;
 import net.bytebuddy.implementation.bind.annotation.FieldValue;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.validator.constraints.ConstraintComposition;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.Constraint;
+import javax.validation.constraints.*;
 import java.util.Set;
 
 @Entity
@@ -27,6 +26,7 @@ public class User {
     @Column(name="email", length = 30, nullable = false, unique = true)
     @NotBlank
     @Max(30)
+    @Email
     private String email;
 
     @Column(name="password", length = 16, nullable = false)
