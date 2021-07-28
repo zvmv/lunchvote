@@ -18,11 +18,7 @@ import java.util.Set;
 @Table(name="users")
 @Getter
 @Setter
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
+public class User extends AbstractBaseEntity {
     @Column(name="email", length = 30, nullable = false, unique = true)
     @NotBlank
     @Max(30)
