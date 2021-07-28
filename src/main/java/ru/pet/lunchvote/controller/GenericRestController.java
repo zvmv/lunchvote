@@ -1,28 +1,31 @@
 package ru.pet.lunchvote.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.pet.lunchvote.model.Restaurant;
-import ru.pet.lunchvote.repository.RestaurantRepository;
+import ru.pet.lunchvote.model.AbstractBaseEntity;
 
 import java.util.List;
 
-abstract public class GenericRestController<T> {
-    GenericRepository<T> repository;
+abstract public class GenericRestController<T extends AbstractBaseEntity> {
+    private static final Logger log = LoggerFactory.getLogger(RootController.class);
+    JpaRepository<T, Integer> repository;
 
-    public GenericRestController(GenericRepository repository) {
+    public GenericRestController(JpaRepository<T, Integer> repository) {
         this.repository = repository;
     }
 
     @GetMapping
-    public ResponseEntity<List<Restaurant>> getAll(){
+    public ResponseEntity<List<T>> getAll(){
         return ResponseEntity.ok(repository.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Restaurant> getById(@PathVariable("id") Integer id){
-        try { return ResponseEntity.ok(repository.getById(id)); }
+    public ResponseEntity<T> getById(@PathVariable("id") Integer id){
+        try { return ResponseEntity.ok(repository.findById(id).get()); }
         catch (EmptyResultDataAccessException e) { return ResponseEntity.notFound().build(); }
     }
 
@@ -34,7 +37,8 @@ abstract public class GenericRestController<T> {
     }
 
     @PostMapping
-    public ResponseEntity<Restaurant> put(@RequestBody Restaurant restaurant){
-        repository.save(restaurant);
-        return ResponseEntity.ok(restaurant);
+    public ResponseEntity<T> put(@RequestBody T body) {
+        repository.save(body);
+        return ResponseEntity.ok(body);
+    }
 }
