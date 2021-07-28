@@ -1,10 +1,20 @@
 package ru.pet.lunchvote.model;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-public class Vote {
-    Integer id;
-    LocalDate date;
-    Menu menu;
-    User user;
+@Entity
+@Table(name = "vote")
+public class Vote extends AbstractBaseEntity {
+
+    @NotNull
+    private LocalDate votedate;
+
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Restaurant restaurant;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 }
