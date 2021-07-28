@@ -33,9 +33,9 @@ public class RootController {
     }
 
     @GetMapping("/")
-    public String main(Model model, HttpServletRequest request){
+    public String main(HttpServletRequest request){
         log.info("Main");
-        model.addAttribute("user", getLoggedUser(request));
+        request.setAttribute("user", getLoggedUser(request));
         return "index";
     }
 
@@ -73,6 +73,7 @@ public class RootController {
         User loggedUser = getLoggedUser(request);
         if (loggedUser == null || !loggedUser.isAdmin()) return "index";
         request.setAttribute("users", userRepository.findAll());
+        request.setAttribute("user", getLoggedUser(request));
         return "userlist";
     }
 
@@ -81,18 +82,22 @@ public class RootController {
         User loggedUser = getLoggedUser(request);
         if (loggedUser == null || !loggedUser.isAdmin()) return "index";
         request.setAttribute("restaurants", restaurantRepository.findAll());
+        request.setAttribute("user", getLoggedUser(request));
         return "restaurants";
     }
 
     private User getLoggedUser(HttpServletRequest request){
-        Cookie cookie = Arrays.stream(request.getCookies()).filter(c -> "session".equals(c.getName())).findFirst().get();
-        User user = null;
-        int id = cookie == null? -1: Security.checkLogin(cookie.getValue());
-        log.info("Cookie: " + cookie.getValue());
-        if (id > 0) {
-            user = userRepository.getById(id);
-            log.info("Has logged user " + user.getEmail());
+        try {
+            Cookie cookie = Arrays.stream(request.getCookies()).filter(c -> "session".equals(c.getName())).findFirst().get();
+            User user = null;
+            int id = cookie == null ? -1 : Security.checkLogin(cookie.getValue());
+            if (id > 0) {
+                user = userRepository.getById(id);
+                log.info("Has logged user " + user.getEmail());
+            }
+            return user;
+        } catch (Exception e){
+            return null;
         }
-        return user;
     }
 }
