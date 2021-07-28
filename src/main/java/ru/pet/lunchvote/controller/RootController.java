@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.pet.lunchvote.Security;
 import ru.pet.lunchvote.model.User;
+import ru.pet.lunchvote.repository.RestaurantRepository;
 import ru.pet.lunchvote.repository.UserRepository;
 
 import javax.servlet.http.Cookie;
@@ -23,10 +24,12 @@ public class RootController {
     @Value("${welcome.message}")
     String message;
 
-    UserRepository repository;
+    UserRepository userRepository;
+    RestaurantRepository restaurantRepository;
 
-    public RootController(UserRepository userRepository) {
-        this.repository = userRepository;
+    public RootController(UserRepository userRepository, RestaurantRepository restaurantRepository) {
+        this.userRepository = userRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     @GetMapping("/")
@@ -41,7 +44,7 @@ public class RootController {
        log.info("login with: " + email + ", password: " + pass);
        if (email == null || pass == null) return "index";
 
-       User user = repository.getByEmail(email);
+       User user = userRepository.getByEmail(email);
        if (user != null && user.getPassword().equals(pass) && user.getEnabled()) {
            String uuid = Security.login(user.getId());
            Cookie cookie = new Cookie("session", uuid);
@@ -69,8 +72,16 @@ public class RootController {
     public String userList(HttpServletRequest request){
         User loggedUser = getLoggedUser(request);
         if (loggedUser == null || !loggedUser.isAdmin()) return "index";
-        request.setAttribute("users", repository.findAll());
+        request.setAttribute("users", userRepository.findAll());
         return "userlist";
+    }
+
+    @GetMapping("restaurants")
+    public String restaurantList(HttpServletRequest request){
+        User loggedUser = getLoggedUser(request);
+        if (loggedUser == null || !loggedUser.isAdmin()) return "index";
+        request.setAttribute("restaurants", restaurantRepository.findAll());
+        return "restaurants";
     }
 
     private User getLoggedUser(HttpServletRequest request){
@@ -79,7 +90,7 @@ public class RootController {
         int id = cookie == null? -1: Security.checkLogin(cookie.getValue());
         log.info("Cookie: " + cookie.getValue());
         if (id > 0) {
-            user = repository.getById(id);
+            user = userRepository.getById(id);
             log.info("Has logged user " + user.getEmail());
         }
         return user;
