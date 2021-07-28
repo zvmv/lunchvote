@@ -1,7 +1,5 @@
 package ru.pet.lunchvote;
 
-import ru.pet.lunchvote.model.User;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;

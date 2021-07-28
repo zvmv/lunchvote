@@ -3,14 +3,10 @@ package ru.pet.lunchvote.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.FieldDefaults;
-import net.bytebuddy.implementation.bind.annotation.FieldValue;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.hibernate.validator.constraints.ConstraintComposition;
 
 import javax.persistence.*;
-import javax.validation.Constraint;
 import javax.validation.constraints.*;
 import java.util.Set;
 

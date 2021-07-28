@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.pet.lunchvote.model.Restaurant;
 import ru.pet.lunchvote.repository.RestaurantRepository;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/restaurant")
 @Transactional
