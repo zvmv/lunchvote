@@ -12,20 +12,16 @@ import java.time.LocalDate;
 @Table(name = "menu")
 @Getter
 @Setter
-public class Menu {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
+public class Menu extends AbstractBaseEntity {
+    @NotNull
+    private LocalDate menudate;
 
     @NotNull
-    LocalDate menudate;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Restaurant restaurant;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    Restaurant restaurant;
+    private String dishes;
 
-    @NotNull
-    String dishes;
-
-    Integer price;
+    private Integer price;
 }
