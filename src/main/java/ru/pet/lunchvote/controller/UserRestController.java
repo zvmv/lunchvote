@@ -20,28 +20,26 @@ public class UserRestController {
     }
 
     @GetMapping("/users")
-    public List<User> getAll(){
-      return repository.findAll();
+    public ResponseEntity<List<User>> getAll(){
+      return ResponseEntity.ok(repository.findAll());
     }
 
     @GetMapping("/users/{id}")
     public ResponseEntity<User> getById(@PathVariable("id") int id){
-        return new ResponseEntity<>(repository.getById(id),HttpStatus.OK);
+        try { return ResponseEntity.ok(repository.getById(id)); }
+        catch (EmptyResultDataAccessException e) { return ResponseEntity.notFound().build(); }
     }
 
-    @PutMapping("users")
+    @PostMapping("/users")
     public ResponseEntity<User> put(@RequestBody User user){
         repository.save(user);
         return ResponseEntity.ok(user);
     }
 
-    @DeleteMapping("users/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") int id){
-        try {
-            repository.deleteById(id);
-        } catch (EmptyResultDataAccessException e){
-           return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(null);
+        try { repository.deleteById(id); }
+        catch (EmptyResultDataAccessException e){ return ResponseEntity.notFound().build(); }
+        return ResponseEntity.ok().build();
     }
 }
