@@ -12,15 +12,11 @@ import javax.validation.constraints.NotNull;
 @Table(name="restaurant")
 @Getter
 @Setter
-public class Restaurant {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer id;
-
+public class Restaurant extends AbstractBaseEntity {
     @NotBlank
     @Max(15)
-    String name;
+    private String name;
 
     @Max(50)
-    String address;
+    private String address;
 }
