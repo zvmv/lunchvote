@@ -44,7 +44,7 @@ public class RootController {
        if (email == null || pass == null) return "index";
 
        User user = userRepository.getByEmail(email);
-       if (user != null && user.getPassword().equals(pass) && user.getEnabled()) {
+       if (user != null && user.getPassword().equals(pass) && user.isEnabled()) {
            String uuid = Security.login(user.getId());
            Cookie cookie = new Cookie("session", uuid);
            response.addCookie(cookie);

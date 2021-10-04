@@ -3,12 +3,9 @@ package ru.pet.lunchvote.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.util.Set;
 
 @Entity
 @Table(name="users")
@@ -32,19 +29,12 @@ public class User extends AbstractBaseEntity {
     @Max(30)
     private String name;
 
-    @Column(name="roles", nullable = false)
-    @Enumerated(EnumType.STRING)
-    @CollectionTable(name="user_roles", joinColumns = @JoinColumn(name ="user_id"))
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id")
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Role> roles;
-
     @Column(name="enabled")
     @NotNull
-    Boolean enabled;
+    private boolean enabled;
 
-    public boolean isAdmin(){
-       return roles.contains(Role.ADMIN);
-    }
+    @Column(name="admin")
+    @NotNull
+    private boolean admin;
+
 }
