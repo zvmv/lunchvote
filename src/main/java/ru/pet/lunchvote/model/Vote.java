@@ -13,7 +13,7 @@ public class Vote extends AbstractBaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    private Restaurant restaurant;
+    private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;

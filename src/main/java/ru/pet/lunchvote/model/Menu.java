@@ -5,6 +5,7 @@ import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
@@ -14,13 +15,14 @@ import java.time.LocalDate;
 @Setter
 public class Menu extends AbstractBaseEntity {
     @NotNull
-    private LocalDate menudate;
+    private LocalDate date;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
-    private Restaurant restaurant;
+    @Max(16)
+    private String restaurant;
 
     @NotNull
+    @Max(255)
     private String dishes;
 
     private Integer price;

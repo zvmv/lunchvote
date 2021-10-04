@@ -1,16 +1,66 @@
 package ru.pet.lunchvote.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.model.Menu;
 import ru.pet.lunchvote.repository.MenuRepository;
+
+import java.net.URI;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/menu")
 @Transactional
-public class MenuRestController extends GenericRestController<Menu> {
+public class MenuRestController {
+    private MenuRepository repository;
+    private static final Logger log = LoggerFactory.getLogger(RootController.class);
+    public static final String REST_URL = "/menu";
+
     public MenuRestController(MenuRepository repository) {
-        super(repository);
+        this.repository = repository;
     }
+    @GetMapping
+    public ResponseEntity<List<Menu>> getAll() {
+        return ResponseEntity.ok(repository.getAllByDate(LocalDate.now()));
+    };
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Menu> getById(@PathVariable int id){
+        try { return ResponseEntity.ok(repository.findById(id).get()); }
+        catch (NoSuchElementException e) { return ResponseEntity.notFound().build(); }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable int id){
+        try { repository.deleteById(id); }
+        catch (EmptyResultDataAccessException e){ return ResponseEntity.notFound().build(); }
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping
+    public ResponseEntity<Menu> create(@RequestBody Menu body) {
+        if (body.getId() != null) return ResponseEntity.badRequest().build();
+        Menu created = repository.save(body);
+        URI createdURI = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL + "/{id}")
+                .buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(createdURI).body(body);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Menu> update(@RequestBody Menu body, @PathVariable Integer id) {
+        if (id.equals(body.getId()) == false) return ResponseEntity.badRequest().build();
+        repository.save(body);
+        return ResponseEntity.ok(body);
+    }
+
 }
