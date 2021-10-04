@@ -1,6 +1,5 @@
 package ru.pet.lunchvote.model;
 
-
 import lombok.Getter;
 import lombok.Setter;
 

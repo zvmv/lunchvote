@@ -25,5 +25,6 @@ public class Menu extends AbstractBaseEntity {
     @Max(255)
     private String dishes;
 
+    @NotNull
     private Integer price;
 }

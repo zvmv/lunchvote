@@ -3,7 +3,6 @@ package ru.pet.lunchvote.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +10,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.model.User;
 import ru.pet.lunchvote.repository.UserRepository;
 
-import javax.persistence.EntityManager;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
