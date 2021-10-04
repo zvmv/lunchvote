@@ -27,11 +27,18 @@ public class MenuRestController {
     public MenuRestController(MenuRepository repository) {
         this.repository = repository;
     }
+
     @GetMapping
     public ResponseEntity<List<Menu>> getAll() {
         return ResponseEntity.ok(repository.getAllByDate(LocalDate.now()));
     };
 
+    @GetMapping("/date/{dateVariable}")
+    public ResponseEntity<List<Menu>> getByDate(@PathVariable String dateVariable) {
+        LocalDate date = LocalDate.parse(dateVariable);
+        log.info("Get menus by date + ", date);
+        return ResponseEntity.ok(repository.getAllByDate(date));
+    };
 
     @GetMapping("/{id}")
     public ResponseEntity<Menu> getById(@PathVariable int id){
