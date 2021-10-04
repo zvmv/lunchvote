@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Setter
 public class Menu extends AbstractBaseEntity {
     @NotNull
-    private LocalDate date;
+    private LocalDate menudate;
 
     @NotNull
     @Max(16)

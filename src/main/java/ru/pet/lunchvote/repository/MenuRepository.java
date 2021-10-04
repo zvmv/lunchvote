@@ -9,5 +9,5 @@ import java.util.List;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Integer> {
-    public List<Menu> getAllByDate(LocalDate date);
+    public List<Menu> getAllByMenudate(LocalDate date);
 }

@@ -8,7 +8,7 @@ VALUES ('Мак дональдс', 'пл.Ленина'),
        ('Мир вкуса', 'рядом с т.ц. Восторг'),
        ('Автосуши', 'рядом с т.ц. Восторг');
 
-INSERT INTO menu (restaurant, date, dishes, price)
+INSERT INTO menu (restaurant, menudate, dishes, price)
 VALUES ('Mc.Donalds', CURRENT_DATE, 'Бигтейсти, картошка фри, кола', 300),
        ('Волга', CURRENT_DATE, 'Салат, солянка, чай/кофе', 400),
        ('Мир вкуса', CURRENT_DATE, 'Пицца "Пепперони"', 450),
