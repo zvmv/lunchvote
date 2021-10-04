@@ -16,5 +16,6 @@ import java.util.List;
 public class UserRestController extends GenericRestController<User> {
     public UserRestController(UserRepository repository) {
         super(repository);
+        REST_URL = "/users";
     }
 }
