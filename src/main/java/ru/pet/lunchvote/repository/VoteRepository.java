@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface VoteRepository extends JpaRepository<Vote, Integer> {
     public Vote getByVotedateAndUser(LocalDate date, User user);
+    public List<Vote> getAllByVotedate(LocalDate date);
 }
