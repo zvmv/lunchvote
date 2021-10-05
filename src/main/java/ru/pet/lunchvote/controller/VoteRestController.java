@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.Security;
 import ru.pet.lunchvote.model.Vote;
+import ru.pet.lunchvote.model.VoteTO;
 import ru.pet.lunchvote.repository.MenuRepository;
 import ru.pet.lunchvote.repository.UserRepository;
 import ru.pet.lunchvote.repository.VoteRepository;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/votes")
@@ -34,29 +37,47 @@ public class VoteRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Vote>> getAll(){
-       return ResponseEntity.ok(repository.findAll());
+    public ResponseEntity<List<VoteTO>> getAll(){
+       return ResponseEntity.ok(repository.findAll().stream().map(this::voteToVoteTO).collect(Collectors.toList()));
     }
 
     @PostMapping
-    public ResponseEntity<Vote> makeVote(@RequestParam int id){
+    public ResponseEntity<?> makeVote(@RequestParam int id){
+        if (LocalTime.now().isAfter(LocalTime.parse("20:00:00"))) {
+            log.warn("Voted too late");
+            return ResponseEntity.badRequest().build();
+        }
         Integer userId = Security.getLoggedUserId();
         if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        Vote vote = new Vote();
-        vote.setVotedate(LocalDate.now());
-        vote.setUser(userRepo.getById(userId));
+
+        Vote vote = repository.getByVotedateAndUser(LocalDate.now(), userRepo.getById(userId));
+        if (vote == null) {
+            vote = new Vote();
+            vote.setVotedate(LocalDate.now());
+            vote.setUser(userRepo.getById(userId));
+        }
         try {
             vote.setMenu(menuRepo.getById(id));
         } catch (Exception e){
             log.error("making vote: menu does not exists");
             return ResponseEntity.badRequest().build();
         }
-        Vote created = repository.save(vote);
+        repository.save(vote);
+        VoteTO created = voteToVoteTO(vote);
         log.info("user " + vote.getUser().getName() + " make vote for " + vote.getMenu().getRestaurant());
         URI createdURI = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(createdURI).body(vote);
+        return ResponseEntity.created(createdURI).body(created);
+    }
+
+    public VoteTO voteToVoteTO(Vote vote){
+        VoteTO to = new VoteTO();
+        to.setId(vote.getId());
+        to.setUserName(vote.getUser().getName());
+        to.setRestaurant(vote.getMenu().getRestaurant());
+        to.setMenuId(vote.getMenu().getId());
+        return to;
     }
 
 }
