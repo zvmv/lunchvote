@@ -1,4 +1,0 @@
-<a th:if="${user != null && user.isAdmin()}" href="userlist">Users</a>
-<a th:if="${user != null && user.isAdmin()}" href="restaurants">Restaurants</a>
-<a href="voting">Voting</a>
-<a th:href="@{/logout}" th:if="${user}" th:text="${user.name} + ': Logout'">Logout</a>
