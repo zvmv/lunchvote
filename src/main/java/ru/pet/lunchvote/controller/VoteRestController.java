@@ -42,7 +42,7 @@ public class VoteRestController {
     @GetMapping
     @Secured("ROLE_ADMIN")
     public ResponseEntity<List<VoteTO>> getAll(){
-       return ResponseEntity.ok(repository.findAll().stream().map(this::voteToVoteTO).collect(Collectors.toList()));
+       return ResponseEntity.ok(repository.findAll().stream().map(VoteTO::new).collect(Collectors.toList()));
     }
 
     @GetMapping("/winner")
@@ -87,19 +87,11 @@ public class VoteRestController {
             return ResponseEntity.badRequest().build();
         }
         repository.save(vote);
-        VoteTO created = voteToVoteTO(vote);
+        VoteTO created = new VoteTO(vote);
         log.info("user " + created.getUserId() + " make vote for " + created.getMenuId());
         URI createdURI = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
         return ResponseEntity.created(createdURI).body(created);
-    }
-
-    public VoteTO voteToVoteTO(Vote vote){
-        VoteTO to = new VoteTO();
-        to.setId(vote.getId());
-        to.setUserId(vote.getUser().getId());
-        to.setMenuId(vote.getMenu().getId());
-        return to;
     }
 }
