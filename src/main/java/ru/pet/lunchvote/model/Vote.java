@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class Vote extends AbstractBaseEntity {
 
     @NotNull
+    @Column(nullable = false)
     private LocalDate votedate;
 
     @NotNull
