@@ -5,11 +5,11 @@ VALUES ('Mike', 'mike@yandex.ru', true, 'pass', false),
        ('Jack', 'jack@yandex.ru', true, 'pass', false),
        ('Admin', 'admin@yandex.ru', true, 'pass', true);
 
-INSERT INTO restaurant (name, address)
-VALUES ('Мак дональдс', 'пл.Ленина'),
-       ('Волга', 'ст.Кстово'),
-       ('Мир вкуса', 'рядом с т.ц. Восторг'),
-       ('Автосуши', 'рядом с т.ц. Восторг');
+-- INSERT INTO restaurant (name, address)
+-- VALUES ('Мак дональдс', 'пл.Ленина'),
+--        ('Волга', 'ст.Кстово'),
+--        ('Мир вкуса', 'рядом с т.ц. Восторг'),
+--        ('Автосуши', 'рядом с т.ц. Восторг');
 
 INSERT INTO menu (restaurant, menudate, dishes, price)
 VALUES ('Mc.Donalds', CURRENT_DATE, 'Бигтейсти, картошка фри, кола', 300),
