@@ -1,7 +1,9 @@
 package ru.pet.lunchvote.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -15,6 +17,10 @@ import java.util.List;
 @Table(name="users")
 @Getter
 @Setter
+@JsonAutoDetect(
+        fieldVisibility = JsonAutoDetect.Visibility.ANY,
+        getterVisibility = JsonAutoDetect.Visibility.NONE,
+        isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class User extends AbstractBaseEntity implements UserDetails {
     @Column(name="email", length = 30, nullable = false, unique = true)
     @NotBlank
@@ -33,11 +39,11 @@ public class User extends AbstractBaseEntity implements UserDetails {
     @Max(30)
     private String name;
 
-    @Column(name="enabled")
+    @Column(name="enabled", nullable = false)
     @NotNull
     private boolean enabled;
 
-    @Column(name="admin")
+    @Column(name="admin", nullable = false)
     @NotNull
     private boolean admin;
 
