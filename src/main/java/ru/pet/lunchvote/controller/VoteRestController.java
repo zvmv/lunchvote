@@ -3,13 +3,14 @@ package ru.pet.lunchvote.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.pet.lunchvote.Security;
 import ru.pet.lunchvote.model.Menu;
+import ru.pet.lunchvote.model.User;
 import ru.pet.lunchvote.model.Vote;
 import ru.pet.lunchvote.model.VoteTO;
 import ru.pet.lunchvote.repository.MenuRepository;
@@ -39,6 +40,7 @@ public class VoteRestController {
     }
 
     @GetMapping
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<List<VoteTO>> getAll(){
        return ResponseEntity.ok(repository.findAll().stream().map(this::voteToVoteTO).collect(Collectors.toList()));
     }
@@ -54,6 +56,7 @@ public class VoteRestController {
     }
 
     @DeleteMapping("/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> delete(@PathVariable int id){
         try {repository.deleteById(id); }
         catch (EmptyResultDataAccessException e){ return ResponseEntity.notFound().build(); }
@@ -61,19 +64,20 @@ public class VoteRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> makeVote(@RequestParam int id, @RequestParam UUID session){
+    @Secured("ROLE_USER")
+    public ResponseEntity<?> makeVote(@RequestParam int id){
         if (LocalTime.now().isAfter(LocalTime.parse("11:00:00"))) {
             log.warn("Voted too late");
 //            return ResponseEntity.badRequest().build();
         }
-        Integer userId = Security.getLoggedUserId(session);
-        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) principal;
 
-        Vote vote = repository.getByVotedateAndUser(LocalDate.now(), userRepo.getById(userId));
+        Vote vote = repository.getByVotedateAndUser(LocalDate.now(), user);
         if (vote == null) {
             vote = new Vote();
             vote.setVotedate(LocalDate.now());
-            vote.setUser(userRepo.getById(userId));
+            vote.setUser(user);
         }
         try {
             Menu votedMenu = menuRepo.getById(id);

@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,12 +18,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/menu")
+@RequestMapping("/menus")
 @Transactional
 public class MenuRestController {
     private MenuRepository repository;
-    private static final Logger log = LoggerFactory.getLogger(RootController.class);
-    public static final String REST_URL = "/menu";
+    private static final Logger log = LoggerFactory.getLogger(MenuRestController.class);
+    public static final String REST_URL = "/menus";
 
     public MenuRestController(MenuRepository repository) {
         this.repository = repository;
@@ -51,6 +53,7 @@ public class MenuRestController {
     }
 
     @DeleteMapping("/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<?> delete(@PathVariable int id){
         try { repository.deleteById(id); }
         catch (EmptyResultDataAccessException e){ return ResponseEntity.notFound().build(); }
@@ -58,6 +61,7 @@ public class MenuRestController {
     }
 
     @PostMapping
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Menu> create(@RequestBody Menu body) {
         if (body.getId() != null) return ResponseEntity.badRequest().build();
         Menu created = repository.save(body);
@@ -68,6 +72,7 @@ public class MenuRestController {
     }
 
     @PutMapping("/{id}")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Menu> update(@RequestBody Menu body, @PathVariable Integer id) {
         if (id.equals(body.getId()) == false) return ResponseEntity.badRequest().build();
         repository.save(body);
