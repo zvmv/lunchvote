@@ -78,7 +78,12 @@ public class VoteRestController {
             vote.setUser(userRepo.getById(userId));
         }
         try {
-            vote.setMenu(menuRepo.getById(id));
+            Menu votedMenu = menuRepo.getById(id);
+            if (!LocalDate.now().equals(votedMenu.getMenudate())) {
+                log.error("making vote: menu outdated");
+                return ResponseEntity.badRequest().build();
+            };
+            vote.setMenu(votedMenu);
         } catch (Exception e){
             log.error("making vote: menu does not exists");
             return ResponseEntity.badRequest().build();
