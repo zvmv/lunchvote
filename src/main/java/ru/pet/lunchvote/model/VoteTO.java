@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class VoteTO {
     Integer id;
-    String restaurant;
-    String userName;
+    Integer userId;
     Integer menuId;
 }

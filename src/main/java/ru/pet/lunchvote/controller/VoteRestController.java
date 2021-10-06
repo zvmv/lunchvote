@@ -100,8 +100,7 @@ public class VoteRestController {
     public VoteTO voteToVoteTO(Vote vote){
         VoteTO to = new VoteTO();
         to.setId(vote.getId());
-        to.setUserName(vote.getUser().getName());
-        to.setRestaurant(vote.getMenu().getRestaurant());
+        to.setUserId(vote.getUser().getId());
         to.setMenuId(vote.getMenu().getId());
         return to;
     }
