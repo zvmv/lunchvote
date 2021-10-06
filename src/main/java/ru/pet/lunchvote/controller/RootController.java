@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.pet.lunchvote.Security;
-import ru.pet.lunchvote.model.User;
 import ru.pet.lunchvote.repository.UserRepository;
+
+import java.util.UUID;
 
 @Controller
 public class RootController {
@@ -22,23 +23,17 @@ public class RootController {
     }
 
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(){
-        Security.logout();
+    public ResponseEntity<?> logout(@RequestParam UUID session){
+        Security.logout(session);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String email, @RequestParam String pass){
-       log.info("login with: " + email + ", password: " + pass);
-       if (email == null || pass == null) ResponseEntity.badRequest().build();
-
-       User user = userRepository.getByEmail(email);
-       if (user != null && pass.equals(user.getPassword()) && user.isEnabled()) {
-           Security.login(user.getId());
-           log.info("Login successful.");
-           return ResponseEntity.ok().build();
-       }
-       else log.error("Login failed! ");
-       return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        log.info("login with: " + email + ", password: " + pass);
+        if (email == null || pass == null) ResponseEntity.badRequest().build();
+        UUID uuid = Security.login(email, pass);
+        if (uuid == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.ok(uuid);
     }
 }

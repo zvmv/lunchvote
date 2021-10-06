@@ -63,12 +63,12 @@ public class VoteRestController {
     }
 
     @PostMapping
-    public ResponseEntity<?> makeVote(@RequestParam int id){
+    public ResponseEntity<?> makeVote(@RequestParam int id, @RequestParam UUID session){
         if (LocalTime.now().isAfter(LocalTime.parse("11:00:00"))) {
             log.warn("Voted too late");
 //            return ResponseEntity.badRequest().build();
         }
-        Integer userId = Security.getLoggedUserId();
+        Integer userId = Security.getLoggedUserId(session);
         if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
         Vote vote = repository.getByVotedateAndUser(LocalDate.now(), userRepo.getById(userId));
