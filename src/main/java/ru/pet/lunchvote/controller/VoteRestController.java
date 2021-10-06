@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/votes")
 @Transactional
 public class VoteRestController {
-    private static final Logger log = LoggerFactory.getLogger(RootController.class);
+    private static final Logger log = LoggerFactory.getLogger(VoteRestController.class);
     private VoteRepository repository;
     private UserRepository userRepo;
     private MenuRepository menuRepo;

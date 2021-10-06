@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 @Transactional
 public class UserRestController {
     UserRepository repository;
-    private static final Logger log = LoggerFactory.getLogger(RootController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserRestController.class);
     public static final String REST_URL = "/users";
 
     public UserRestController(UserRepository repository) {
