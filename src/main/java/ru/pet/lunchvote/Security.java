@@ -24,7 +24,7 @@ public class Security {
        return loggedUserId;
     }
 
-    public static void logout(String uuid){
+    public static void logout(){
         loggedUserId = null;
     }
 

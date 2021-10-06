@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.pet.lunchvote.Security;
@@ -18,6 +19,12 @@ public class RootController {
 
     public RootController(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(){
+        Security.logout();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
