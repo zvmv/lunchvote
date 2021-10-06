@@ -19,10 +19,7 @@ import ru.pet.lunchvote.repository.VoteRepository;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -52,7 +49,8 @@ public class VoteRestController {
         if (votes.isEmpty()) return ResponseEntity.noContent().build();
         Map<Menu, Integer> voteTable = new HashMap<>();
         for (Vote vote: votes) voteTable.merge(vote.getMenu(), 1, Math::addExact);
-        return ResponseEntity.ok(voteTable.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get().getKey());
+        Menu winner = voteTable.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get().getKey();
+        return ResponseEntity.ok(winner);
     }
 
     @DeleteMapping("/{id}")
@@ -79,10 +77,6 @@ public class VoteRestController {
         }
         try {
             Menu votedMenu = menuRepo.getById(id);
-            if (!LocalDate.now().equals(votedMenu.getMenudate())) {
-                log.error("making vote: menu outdated");
-                return ResponseEntity.badRequest().build();
-            };
             vote.setMenu(votedMenu);
         } catch (Exception e){
             log.error("making vote: menu does not exists");
@@ -90,7 +84,7 @@ public class VoteRestController {
         }
         repository.save(vote);
         VoteTO created = voteToVoteTO(vote);
-        log.info("user " + vote.getUser().getName() + " make vote for " + vote.getMenu().getRestaurant());
+        log.info("user " + created.getUserId() + " make vote for " + created.getMenuId());
         URI createdURI = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -104,5 +98,4 @@ public class VoteRestController {
         to.setMenuId(vote.getMenu().getId());
         return to;
     }
-
 }
