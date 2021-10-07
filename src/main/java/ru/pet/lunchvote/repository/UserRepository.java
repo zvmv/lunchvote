@@ -12,6 +12,10 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     public User getByEmail(String email);
 
     @Modifying
-    @Query("update User u set u.email = : #{#user.email} where u.id = : #{#user.id}")
+    @Query("update User u set u.email = :#{#user.email}, " +
+            "u.name = :#{#user.name}, " +
+            "u.password = :#{#user.password}, " +
+            "u.admin = :#{#user.admin}, " +
+            "u.enabled = :#{#user.enabled} where u.id = :#{#user.id}")
     public int update(@Param("user") User user);
 }
