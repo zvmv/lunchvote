@@ -22,6 +22,27 @@ import java.util.List;
         getterVisibility = JsonAutoDetect.Visibility.NONE,
         isGetterVisibility = JsonAutoDetect.Visibility.NONE)
 public class User extends AbstractBaseEntity implements UserDetails {
+
+    public User(){
+    }
+
+    public User(String email, String password, String name, boolean enabled, boolean admin) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.enabled = enabled;
+        this.admin = admin;
+    }
+
+    public User(Integer id, String email, String password, String name, boolean enabled, boolean admin) {
+        this.setId(id);
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.enabled = enabled;
+        this.admin = admin;
+    }
+
     @Column(name="email", length = 30, nullable = false, unique = true)
     @NotBlank
     @Max(30)
