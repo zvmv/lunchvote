@@ -2,14 +2,17 @@ package ru.pet.lunchvote.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.model.User;
 import ru.pet.lunchvote.repository.UserRepository;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -22,6 +25,7 @@ public class UserRestController {
     private static final Logger log = LoggerFactory.getLogger(UserRestController.class);
     public static final String REST_URL = "/users";
 
+    @Autowired
     public UserRestController(UserRepository repository) {
         this.repository = repository;
     }
@@ -45,8 +49,8 @@ public class UserRestController {
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody User body) {
-        if (body.getId() != null) return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> create(@Valid @RequestBody User body) {
+        if (body.getId() != null) return ResponseEntity.badRequest().body("'id' is not allowed in new entity's");
         User created = repository.save(body);
         URI createdURI = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -55,9 +59,11 @@ public class UserRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@RequestBody User body, @PathVariable Integer id) {
-        if (id.equals(body.getId()) == false) return ResponseEntity.badRequest().build();
-        repository.save(body);
-        return ResponseEntity.ok(body);
+    public ResponseEntity<?> update(@Valid @RequestBody User body, @PathVariable Integer id) {
+        if (id.equals(body.getId()) == false) return ResponseEntity.badRequest().body("'id' mush be equal to path variable");
+        int modified = repository.update(body);
+        if (modified == 0)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(modified);
     }
 }
