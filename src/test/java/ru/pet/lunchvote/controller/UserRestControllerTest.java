@@ -56,14 +56,14 @@ class UserRestControllerTest {
     }
 
     @Test
-    @WithMockUser(value = "user", roles = {"USER"})
+    @WithMockUser
     void getAllUser() throws Exception {
         mvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isForbidden());
     }
 
     @Test
-    @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
+    @WithMockUser
     void getAllAdmin() throws Exception {
         Mockito.when(userRepository.findAll()).thenReturn(users);
         mvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
@@ -75,7 +75,7 @@ class UserRestControllerTest {
     @Test
     @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
     void getById() throws Exception {
-        Mockito.<Optional<User>>when(userRepository.findById(USER1.getId())).thenReturn(Optional.of(users.get(1)));
+        Mockito.when(userRepository.findById(USER1.getId())).thenReturn(Optional.of(users.get(1)));
         mvc.perform(get("/users/1").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", notNullValue()))
@@ -146,7 +146,7 @@ class UserRestControllerTest {
     @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
     void update() throws Exception {
         Mockito.when(userRepository.update(USER2mod)).thenReturn(1);
-        Mockito.<Optional<User>>when(userRepository.findById(USER2mod.getId())).thenReturn(Optional.of(USER2mod));
+        Mockito.when(userRepository.findById(USER2mod.getId())).thenReturn(Optional.of(USER2mod));
         mvc.perform(put("/users/" + USER2mod.getId()).contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(USER2mod)))
