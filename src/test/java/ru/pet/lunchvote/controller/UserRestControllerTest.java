@@ -1,8 +1,6 @@
 package ru.pet.lunchvote.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.ArgumentMatchers;
@@ -20,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -34,7 +31,7 @@ class UserRestControllerTest {
     ObjectMapper mapper;
 
     @MockBean
-    static UserRepository userRepository;
+    UserRepository userRepository;
 
     static User ADMIN = new User(0,"admin@mail.ru", "pass", "Admin", true, true);
     static User USER1 = new User(1, "user1@mail.ru", "pass", "User1", true, false);
@@ -42,6 +39,7 @@ class UserRestControllerTest {
     static User USER2mod = new User(2,"user2mod@mail.ru", "pass", "User2mod", true, false);
     static User USER3 = new User(3,"user3@mailru", "pass", "User3", true, false);
     static User USER3noid = new User("user3@mail.ru", "pass", "User3", true, false);
+    static User USER3invalid = new User("user3mailru", "pass", "User3", true, false);
 
 
     static List<User> users = Arrays.asList(ADMIN, USER1, USER2);
@@ -87,10 +85,6 @@ class UserRestControllerTest {
     }
 
     @Test
-    void delete() {
-    }
-
-    @Test
     @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
     void createNotNullId() throws Exception {
         mvc.perform(post("/users/").contentType(MediaType.APPLICATION_JSON)
@@ -113,6 +107,25 @@ class UserRestControllerTest {
 
     @Test
     @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
+    void createInvalid() throws Exception {
+        Mockito.when(userRepository.save(ArgumentMatchers.any(User.class))).thenReturn(USER3invalid);
+        mvc.perform(post("/users/").contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(USER3invalid)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
+    void del() throws Exception{
+        Mockito.when(userRepository.getById(2)).thenReturn(null);
+        mvc.perform(delete("/users/2").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+
+    @Test
+    @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
     void updateNotFound() throws Exception {
         mvc.perform(put("/users/" + USER3.getId()).contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
@@ -132,14 +145,12 @@ class UserRestControllerTest {
     @Test
     @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
     void update() throws Exception {
-        Mockito.when(userRepository.save(USER2mod)).thenReturn(USER2mod);
+        Mockito.when(userRepository.update(USER2mod)).thenReturn(1);
         Mockito.<Optional<User>>when(userRepository.findById(USER2mod.getId())).thenReturn(Optional.of(USER2mod));
         mvc.perform(put("/users/" + USER2mod.getId()).contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(USER2mod)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.name", is("User2mod")));
+                .andExpect(status().isNoContent());
 
         mvc.perform(get("/users/" + USER2mod.getId()).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
