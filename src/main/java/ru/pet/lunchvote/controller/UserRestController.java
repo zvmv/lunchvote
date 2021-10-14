@@ -6,12 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.model.User;
 import ru.pet.lunchvote.repository.UserRepository;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -19,10 +22,14 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/users")
 @Transactional
+@Validated
 public class UserRestController {
     UserRepository repository;
     private static final Logger log = LoggerFactory.getLogger(UserRestController.class);
     public static final String REST_URL = "/users";
+
+    @Autowired
+    Validator validator;
 
     @Autowired
     public UserRestController(UserRepository repository) {
@@ -35,7 +42,7 @@ public class UserRestController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable int id){
+    public ResponseEntity<User> getById(@PathVariable @Min(0) int id){
         try { return ResponseEntity.ok(repository.findById(id).get()); }
         catch (NoSuchElementException e) { return ResponseEntity.notFound().build(); }
     }
