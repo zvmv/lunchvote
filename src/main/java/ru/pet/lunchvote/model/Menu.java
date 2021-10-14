@@ -2,11 +2,10 @@ package ru.pet.lunchvote.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 
 @Entity
@@ -19,12 +18,12 @@ public class Menu extends AbstractBaseEntity {
     private LocalDate menudate;
 
     @NotNull
-    @Max(16)
+    @Size( max = 16 )
     @Column(nullable = false)
     private String restaurant;
 
     @NotNull
-    @Max(255)
+    @Size( max = 255 )
     @Column(nullable = false)
     private String dishes;
 

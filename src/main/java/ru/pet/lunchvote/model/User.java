@@ -25,7 +25,7 @@ public class User extends AbstractBaseEntity implements UserDetails {
     public User(){
     }
 
-    public User(String email, String password, String name, boolean enabled, boolean admin) {
+    public User(String email, String password, String name, Boolean enabled, Boolean admin) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -33,7 +33,7 @@ public class User extends AbstractBaseEntity implements UserDetails {
         this.admin = admin;
     }
 
-    public User(Integer id, String email, String password, String name, boolean enabled, boolean admin) {
+    public User(Integer id, String email, String password, String name, Boolean enabled, Boolean admin) {
         this.setId(id);
         this.email = email;
         this.password = password;
@@ -44,32 +44,31 @@ public class User extends AbstractBaseEntity implements UserDetails {
 
     @Column(name="email", length = 30, nullable = false, unique = true)
     @NotBlank
-    @Max(30)
+    @Size( max = 30)
     @Email
     private String email;
 
     @Column(name="password", length = 16, nullable = false)
     @NotNull
-    @Max(16)
-    @Min(5)
+    @Size( min = 4, max = 16)
     private String password;
 
     @Column(name="name", length = 30, nullable = false)
     @NotBlank
-    @Max(30)
+    @Size( max = 30)
     private String name;
 
     @Column(name="enabled", nullable = false)
     @NotNull
-    private boolean enabled;
+    private Boolean enabled;
 
     @Column(name="admin", nullable = false)
     @NotNull
-    private boolean admin;
+    private Boolean admin;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return isAdmin()
+        return getAdmin()
                 ? List.of(
                 (GrantedAuthority) () -> "ROLE_ADMIN",
                 (GrantedAuthority) () -> "ROLE_USER")
@@ -83,16 +82,21 @@ public class User extends AbstractBaseEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return isEnabled();
+        return getEnabled();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return isEnabled();
+        return getEnabled();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return getEnabled();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return isEnabled();
+        return getEnabled();
     }
 }

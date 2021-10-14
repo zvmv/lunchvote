@@ -16,11 +16,8 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>15</java.version>
-        <slf4j.version>1.7.32</slf4j.version>
-        <logback.version>1.2.4</logback.version>
-        <hibernate.version>5.4.32.Final</hibernate.version>
-        <hibernate-validator.version>7.0.1.Final</hibernate-validator.version>
     </properties>
+
     <dependencies>
 <!--        Spring-->
         <dependency>
@@ -78,30 +75,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${hibernate-validator.version}</version>
-        </dependency>
-        <!-- Logging with SLF4J & LogBack -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>runtime</scope>
         </dependency>
     </dependencies>
