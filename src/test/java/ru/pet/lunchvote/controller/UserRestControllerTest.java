@@ -39,12 +39,12 @@ class UserRestControllerTest {
     static User USER2mod = new User(2,"user2mod@mail.ru", "pass", "User2mod", true, false);
     static User USER3 = new User(3,"user3@mailru", "pass", "User3", true, false);
     static User USER3noid = new User("user3@mail.ru", "pass", "User3", true, false);
-    static User USER3invalid = new User("user3mailru", "pass", "User3", true, false);
+    static User USER3invalid = new User("user3mailru", "pas", "", null, null);
 
 
     static List<User> users = Arrays.asList(ADMIN, USER1, USER2);
 
-    //Тест на валидацию добавить
+    //Тест на повторное создание
 
     @Test
     void ContextLoad() {
@@ -112,7 +112,9 @@ class UserRestControllerTest {
         mvc.perform(post("/users/").contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(USER3invalid)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.violations", hasSize(5)));
     }
 
     @Test
