@@ -44,8 +44,6 @@ class UserRestControllerTest {
 
     static List<User> users = Arrays.asList(ADMIN, USER1, USER2);
 
-    //Тест на повторное создание
-
     @Test
     void ContextLoad() {
 
