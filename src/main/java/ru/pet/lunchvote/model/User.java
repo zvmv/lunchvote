@@ -3,7 +3,6 @@ package ru.pet.lunchvote.model;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
