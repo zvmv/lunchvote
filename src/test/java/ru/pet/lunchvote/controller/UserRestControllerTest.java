@@ -117,7 +117,7 @@ class UserRestControllerTest {
 
     @Test
     @WithMockUser(value = "admin", roles = {"ADMIN", "USER"})
-    void del() throws Exception{
+    void deleteAdmin() throws Exception{
         Mockito.when(userRepository.getById(2)).thenReturn(null);
         mvc.perform(delete("/users/2").contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
