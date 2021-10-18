@@ -34,12 +34,8 @@ public class User extends AbstractBaseEntity implements UserDetails {
     }
 
     public User(Integer id, String email, String password, String name, Boolean enabled, Boolean admin) {
+        this(email, password, name, enabled, admin);
         this.setId(id);
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.enabled = enabled;
-        this.admin = admin;
     }
 
     @Column(name="email", length = 30, nullable = false, unique = true)
