@@ -67,7 +67,7 @@ public class MenuRestController {
         URI createdURI = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(createdURI).body(body);
+        return ResponseEntity.created(createdURI).body(created);
     }
 
     @PutMapping("/{id}")
