@@ -13,6 +13,22 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class Menu extends AbstractBaseEntity {
+
+    public Menu(){
+    }
+
+    public Menu(Integer id, LocalDate menudate, String restaurant, String dishes, Integer price) {
+        this(menudate, restaurant, dishes, price);
+        this.setId(id);
+    }
+
+    public Menu(LocalDate menudate, String restaurant, String dishes, Integer price) {
+        this.menudate = menudate;
+        this.restaurant = restaurant;
+        this.dishes = dishes;
+        this.price = price;
+    }
+
     @NotNull
     @Column(nullable = false)
     private LocalDate menudate;
