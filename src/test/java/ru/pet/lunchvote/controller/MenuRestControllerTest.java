@@ -1,7 +1,6 @@
 package ru.pet.lunchvote.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.ToString;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.ArgumentMatchers;
@@ -9,21 +8,17 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.pet.lunchvote.WebSecurityConfig;
 import ru.pet.lunchvote.model.Menu;
 import ru.pet.lunchvote.repository.MenuRepository;
-import ru.pet.lunchvote.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,6 +36,7 @@ class MenuRestControllerTest {
     Menu MENU1 = new Menu(1, LocalDate.now(), "Rest1", "Dishes1", 299);
     Menu MENU2 = new Menu(2, LocalDate.now(), "Rest2", "Dishes2", 399);
     Menu MENU3 = new Menu(3, LocalDate.now().minusDays(1), "Rest3", "Dishes3", 499);
+    Menu MENU3mod = new Menu(3, LocalDate.now().minusDays(1), "Rest3mod", "Dishes3mod", 499);
     Menu MENU4noid = new Menu( null, LocalDate.now(), "Rest4", "Dishes4", 49);
     Menu MENU4 = new Menu(4, LocalDate.now(), "Rest4", "Dishes4", 49);
 
@@ -138,6 +134,22 @@ class MenuRestControllerTest {
     }
 
     @Test
-    void update() {
+    @WithMockUser(roles = "ADMIN")
+    void update() throws Exception {
+        mvc.perform(put("/menus/" + MENU3mod.getId()).contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(this.mapper.writeValueAsString(MENU3mod)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.dishes", is(MENU3mod.getDishes())));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void updateWrongId() throws Exception {
+       mvc.perform(put("/menus/" + MENU3mod.getId() + 1).contentType(MediaType.APPLICATION_JSON)
+               .accept(MediaType.APPLICATION_JSON)
+               .content(this.mapper.writeValueAsString(MENU3mod)))
+               .andExpect(status().isBadRequest());
     }
 }
