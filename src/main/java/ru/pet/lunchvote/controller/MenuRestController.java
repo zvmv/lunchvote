@@ -61,8 +61,8 @@ public class MenuRestController {
 
     @PostMapping
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Menu> create(@RequestBody Menu body) {
-        if (body.getId() != null) return ResponseEntity.badRequest().build();
+    public ResponseEntity<?> create(@RequestBody Menu body) {
+        if (body.getId() != null) return ResponseEntity.badRequest().body("'id' must be null");
         Menu created = repository.save(body);
         URI createdURI = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -74,7 +74,7 @@ public class MenuRestController {
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Menu> update(@RequestBody Menu body, @PathVariable Integer id) {
         if (id.equals(body.getId()) == false) return ResponseEntity.badRequest().build();
-        repository.save(body);
+        repository.update(body);
         return ResponseEntity.ok(body);
     }
 
