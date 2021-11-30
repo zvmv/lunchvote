@@ -19,5 +19,5 @@ public interface MenuRepository extends JpaRepository<Menu, Integer> {
             "m.menudate = :#{#menu.menudate}, " +
             "m.price = :#{#menu.price}, " +
             "m.restaurant = :#{#menu.restaurant} where m.id = :#{#menu.id}")
-    public int update(@Param("user") Menu menu);
+    public int update(@Param("menu") Menu menu);
 }
