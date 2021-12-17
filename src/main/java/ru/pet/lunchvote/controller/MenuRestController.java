@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.model.Menu;
@@ -18,7 +17,6 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/menus")
-@Transactional
 public class MenuRestController {
     private MenuRepository repository;
     private static final Logger log = LoggerFactory.getLogger(MenuRestController.class);

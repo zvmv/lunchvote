@@ -6,7 +6,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.model.Menu;
@@ -25,8 +24,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/votes")
-@Transactional
 public class VoteRestController {
+
+    private static final String VOTE_MAX_TIME = "11:00:00";
+
     private static final Logger log = LoggerFactory.getLogger(VoteRestController.class);
     private VoteRepository repository;
     private UserRepository userRepo;
@@ -45,14 +46,19 @@ public class VoteRestController {
        return ResponseEntity.ok(repository.findAll().stream().map(VoteTO::new).collect(Collectors.toList()));
     }
 
-    @GetMapping("/winner")
-    public ResponseEntity<Menu> getWinner(){
-        List<Vote> votes = repository.getAllByVotedate(LocalDate.now());
+    @GetMapping("/winner/{date}")
+    public ResponseEntity<Menu> getWinnerByDate(@PathVariable LocalDate date){
+        List<Vote> votes = repository.getAllByVotedate(date);
         if (votes.isEmpty()) return ResponseEntity.noContent().build();
         Map<Menu, Integer> voteTable = new HashMap<>();
         for (Vote vote: votes) voteTable.merge(vote.getMenu(), 1, Math::addExact);
         Menu winner = voteTable.entrySet().stream().max(Comparator.comparing(Map.Entry::getValue)).get().getKey();
         return ResponseEntity.ok(winner);
+    }
+
+    @GetMapping("/winner")
+    public ResponseEntity<Menu> getWinner(){
+        return getWinnerByDate(LocalDate.now());
     }
 
     @DeleteMapping("/{id}")
@@ -66,9 +72,9 @@ public class VoteRestController {
     @PostMapping
     @Secured("ROLE_USER")
     public ResponseEntity<?> makeVote(@RequestParam int id){
-        if (LocalTime.now().isAfter(LocalTime.parse("11:00:00"))) {
+        if (LocalTime.now().isAfter(LocalTime.parse(VOTE_MAX_TIME))) {
             log.warn("Voted too late");
-//            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body("You can't change vote after " + VOTE_MAX_TIME);
         }
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = (User) principal;

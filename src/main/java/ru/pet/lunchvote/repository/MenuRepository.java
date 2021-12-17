@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.pet.lunchvote.model.Menu;
 import ru.pet.lunchvote.model.User;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public interface MenuRepository extends JpaRepository<Menu, Integer> {
     public List<Menu> getAllByMenudate(LocalDate date);
     @Modifying
+    @Transactional
     @Query("update Menu m set m.dishes = :#{#menu.dishes}, " +
             "m.menudate = :#{#menu.menudate}, " +
             "m.price = :#{#menu.price}, " +

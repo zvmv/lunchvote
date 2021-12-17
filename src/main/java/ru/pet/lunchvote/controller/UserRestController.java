@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/users")
-@Transactional
 @Validated
 public class UserRestController {
     UserRepository repository;
