@@ -75,5 +75,4 @@ public class MenuRestController {
         repository.update(body);
         return ResponseEntity.ok(body);
     }
-
 }
