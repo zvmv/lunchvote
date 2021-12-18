@@ -74,7 +74,8 @@ public class VoteRestController {
     public ResponseEntity<?> makeVote(@RequestParam int id){
         if (LocalTime.now().isAfter(LocalTime.parse(VOTE_MAX_TIME))) {
             log.warn("Voted too late");
-            return ResponseEntity.badRequest().body("You can't change vote after " + VOTE_MAX_TIME);
+            return ResponseEntity.badRequest()
+                    .body(new ResponseTransfer("You can't change vote after " + VOTE_MAX_TIME, HttpStatus.BAD_REQUEST));
         }
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = (User) principal;
