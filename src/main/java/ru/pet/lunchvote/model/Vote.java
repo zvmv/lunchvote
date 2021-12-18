@@ -18,7 +18,7 @@ public class Vote extends AbstractBaseEntity {
     private LocalDate votedate;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 

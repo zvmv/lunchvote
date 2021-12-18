@@ -3,11 +3,13 @@ package ru.pet.lunchvote.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import ru.pet.lunchvote.ResponseTransfer;
 import ru.pet.lunchvote.model.Menu;
 import ru.pet.lunchvote.model.User;
 import ru.pet.lunchvote.model.Vote;
@@ -26,7 +28,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/votes")
 public class VoteRestController {
 
-    private static final String VOTE_MAX_TIME = "11:00:00";
+    public static final String VOTE_MAX_TIME = "22:00:00";
 
     private static final Logger log = LoggerFactory.getLogger(VoteRestController.class);
     private VoteRepository repository;
@@ -40,15 +42,24 @@ public class VoteRestController {
         this.menuRepo = menuRepo;
     }
 
+    @GetMapping("/date/{dateString}")
+    @Secured("ROLE_ADMIN")
+    public ResponseEntity<List<VoteTO>> getAllByDate(@PathVariable String dateString){
+        LocalDate date = LocalDate.parse(dateString);
+        return ResponseEntity.ok(repository.findAllByVotedate(date).stream().map(VoteTO::new).collect(Collectors.toList()));
+    }
+
     @GetMapping
     @Secured("ROLE_ADMIN")
     public ResponseEntity<List<VoteTO>> getAll(){
        return ResponseEntity.ok(repository.findAll().stream().map(VoteTO::new).collect(Collectors.toList()));
     }
 
-    @GetMapping("/winner/{date}")
-    public ResponseEntity<Menu> getWinnerByDate(@PathVariable LocalDate date){
-        List<Vote> votes = repository.getAllByVotedate(date);
+    @GetMapping("/winner/{dateString}")
+    public ResponseEntity<Menu> getWinnerByDate(@PathVariable String dateString){
+        LocalDate date = LocalDate.now();
+        if (dateString != null) date = LocalDate.parse(dateString);
+        List<Vote> votes = repository.loadAllByVotedate(date);
         if (votes.isEmpty()) return ResponseEntity.noContent().build();
         Map<Menu, Integer> voteTable = new HashMap<>();
         for (Vote vote: votes) voteTable.merge(vote.getMenu(), 1, Math::addExact);
@@ -58,7 +69,7 @@ public class VoteRestController {
 
     @GetMapping("/winner")
     public ResponseEntity<Menu> getWinner(){
-        return getWinnerByDate(LocalDate.now());
+        return getWinnerByDate(null);
     }
 
     @DeleteMapping("/{id}")
