@@ -1,12 +1,12 @@
 package ru.pet.lunchvote.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatcher;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
+import org.mockito.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -22,16 +22,19 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = MenuRestController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class MenuRestControllerTest {
+
     @Autowired
-    private MockMvc mvc;
+    MockMvc mvc;
 
     @Autowired
     ObjectMapper mapper;
 
     @MockBean
     MenuRepository menuRepository;
+
     Menu MENU0 = new Menu(0, LocalDate.now(), "Rest0", "Dishes1", 99);
     Menu MENU1 = new Menu(1, LocalDate.now(), "Rest1", "Dishes1", 299);
     Menu MENU2 = new Menu(2, LocalDate.now(), "Rest2", "Dishes2", 399);
@@ -41,6 +44,11 @@ class MenuRestControllerTest {
     Menu MENU4 = new Menu(4, LocalDate.now(), "Rest4", "Dishes4", 49);
 
     List<Menu> menu = List.of(MENU0, MENU1, MENU2, MENU3);
+
+    @BeforeAll
+    public static void setup(){
+    }
+
 
     class MenuMatcher implements ArgumentMatcher<Menu> {
         private Menu left;
