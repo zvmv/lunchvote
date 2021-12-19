@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.pet.lunchvote.ResponseTransfer;
@@ -89,7 +90,8 @@ public class VoteRestController {
                     .body(new ResponseTransfer("You can't change vote after " + VOTE_MAX_TIME, HttpStatus.BAD_REQUEST));
         }
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = (User) principal;
+        UserDetails userDetails = (UserDetails) principal;
+        User user = userRepo.getByEmail(userDetails.getUsername());
 
         Vote vote = repository.getByVotedateAndUser(LocalDate.now(), user);
         if (vote == null) {
