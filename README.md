@@ -8,5 +8,3 @@ Admin also can add/delete users and votes.
 Users can vote for liked menu, can change them vote,
 but only before 11:00 AM. Anybody can see winner
 in vote. 
-
-## Installation 
