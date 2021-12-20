@@ -14,7 +14,11 @@ A voting system for deciding where to have lunch.
 
 Each restaurant provides a new menu each day.
 
+### Local starting
+    mvn spring-boot:run
+  open http://localhost:8080
+
 ### API
- - Swagger available at /swagger-ui
+ - Swagger available at /swagger-ui/
  - Curl scripts for testing available at scripts dir
  - Admin credentials: admin@yandex.ru:pass
