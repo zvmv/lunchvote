@@ -63,7 +63,7 @@ class UserRestControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles =  {"ADMIN"})
     void getAllAdmin() throws Exception {
         Mockito.when(userRepository.findAll()).thenReturn(users);
         mvc.perform(get("/users").contentType(MediaType.APPLICATION_JSON))
