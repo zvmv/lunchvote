@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/votes")
 public class VoteRestController {
 
-    public static final String VOTE_MAX_TIME = "22:00:00";
+    public static final String VOTE_MAX_TIME = "11:00:00";
 
     private static final Logger log = LoggerFactory.getLogger(VoteRestController.class);
     private VoteRepository repository;
